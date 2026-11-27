@@ -15,8 +15,24 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - run: gradle :app:assembleDebug
+      - name: Build and static checks
+        run: gradle :app:assembleDebug :app:lintDebug :app:testDebugUnitTest
+      - name: Verify APK signature and checksum
+        run: |
+          APK=$(find app/build/outputs/apk/debug -name "*.apk" -print -quit)
+          test -n "$APK"
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner | sort -V | tail -1)
+          "$APKSIGNER" verify --print-certs "$APK"
+          sha256sum "$APK" > app/build/outputs/apk/debug/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         with:
           name: IING-STD-Gallery-APK
-          path: app/build/outputs/apk/debug/*.apk
+          path: |
+            app/build/outputs/apk/debug/*.apk
+            app/build/outputs/apk/debug/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Gallery-Quality-Reports
+          path: app/build/reports/
+          if-no-files-found: ignore
