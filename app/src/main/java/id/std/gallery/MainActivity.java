@@ -14,7 +14,8 @@ import java.util.concurrent.*;
 public class MainActivity extends Activity {
  int BG=0xff101719, ACC=0xff42dcc4;
  final ExecutorService worker=Executors.newSingleThreadExecutor(r->{Thread t=new Thread(()->{android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);r.run();},"gallery-worker");return t;}), thumbs=new ThreadPoolExecutor(1,1,0L,TimeUnit.MILLISECONDS,new ArrayBlockingQueue<Runnable>(12),new ThreadPoolExecutor.DiscardOldestPolicy());
- final Handler ui=new Handler(Looper.getMainLooper()); volatile boolean scrolling; Dialog activePlayer; final Runnable refreshVisible=()->{if(!dead&&!paused&&!videoActive&&grid!=null)grid.invalidateViews();};
+ final Handler ui=new Handler(Looper.getMainLooper()); volatile boolean scrolling; Dialog activePlayer; final Runnable refreshVisible=this::refreshVisibleGrid;
+ void refreshVisibleGrid(){if(!dead&&!paused&&!videoActive&&grid!=null)grid.invalidateViews();}
  final android.util.LruCache<String,Bitmap> cache=new android.util.LruCache<String,Bitmap>(12*1024*1024){protected int sizeOf(String k,Bitmap b){return b.getByteCount();}};
  final ArrayList<Item> items=new ArrayList<>(), visible=new ArrayList<>();
  final Set<String> favorites=new HashSet<>();
