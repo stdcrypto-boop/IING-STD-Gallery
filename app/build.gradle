@@ -4,4 +4,4 @@ android { namespace 'id.std.gallery'; compileSdk 35
  compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
 }
 
-dependencies { implementation 'org.videolan.android:libvlc-all:3.6.0' }
+dependencies { implementation 'org.videolan.android:libvlc-all:3.6.0'; implementation 'com.google.mlkit:segmentation-selfie:16.0.0-beta6' }
